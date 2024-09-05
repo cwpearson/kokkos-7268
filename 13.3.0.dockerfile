@@ -1,4 +1,4 @@
-FROM public.ecr.aws/docker/library/gcc:9.5.0
+FROM public.ecr.aws/docker/library/gcc:13.3.0
 
 ADD cmake-3.29.8-linux-x86_64.sh /cmake.sh
 RUN chmod +x /cmake.sh
