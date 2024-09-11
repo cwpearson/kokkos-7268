@@ -11,3 +11,5 @@ ADD kokkos-4.4-patched /kokkos-4.4-patched
 ADD src /src
 ADD dockerConfigBuildRun.sh /dockerConfigBuildRun.sh
 RUN chmod +x /dockerConfigBuildRun.sh
+
+RUN apt-get update && apt-get install -y linux-perf valgrind

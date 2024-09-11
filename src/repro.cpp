@@ -20,8 +20,17 @@ struct Functor {
       : _output(output_),
         _leftInput(leftInput_),
         _rightInput(rightInput_),
+#if 0
         _iend(output_.extent_int(rank(output_) - 1)),
-        _jend(rightInput_.extent_int(4 - 1)) {}
+#else
+        _iend(0),
+#endif
+        _jend(rightInput_.extent_int(4 - 1)) {
+#if 0
+          std::cerr << __FILE__ << ":" << __LINE__ << " rank(output_)=" << _iend << "\n";
+          std::cerr << __FILE__ << ":" << __LINE__ << " _iend=" << _iend << "\n";
+#endif
+        }
 
   KOKKOS_INLINE_FUNCTION
   void operator()(const int cl, const int bf, const int pt) const {
@@ -35,6 +44,20 @@ struct Functor {
       value_type tmp(0);
       for (int j = 0; j < _jend; ++j)
         tmp += _leftInput(cl, lpt, j, i) * _rightInput(cl, bf, pt, j);
+#if 0
+      if (cl >= _output.extent_int(0)) {
+        std::cerr << __FILE__ << ":" << __LINE__ << "\n";
+      }
+      if (bf >= _output.extent_int(1)) {
+        std::cerr << __FILE__ << ":" << __LINE__ << "\n";
+      }
+      if (pt >= _output.extent_int(2)) {
+        std::cerr << __FILE__ << ":" << __LINE__ << "\n";
+      }
+      if (i >= _output.extent_int(3)) {
+        std::cerr << __FILE__ << ":" << __LINE__ << " i=" << i << " but _output.extent(3)=" << _output.extent_int(3) << "\n";
+      }
+#endif
       _output(cl, bf, pt, i) = tmp;
     }
   }

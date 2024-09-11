@@ -2,6 +2,11 @@
 
 set -eou pipefail
 
+if [ ! $(cat /proc/sys/kernel/perf_event_paranoid) -eq 0 ]; then
+  echo "host perf_event_paranoid is no good"
+  exit 1
+fi
+
 if ! command -v podman >& /dev/null; then
   echo using docker
   DOCKER=docker
@@ -26,8 +31,8 @@ fi
 versions=(
     # 9.5.0
     10.2.0
-    10.5.0
-    11.5.0
+    # 10.5.0
+    # 11.5.0
     # 12.4.0
     # 13.3.0
     # 14.2.0
@@ -38,7 +43,8 @@ for version in "${versions[@]}"; do
 done
 
 for version in "${versions[@]}"; do
-    $DOCKER run --rm -it \
+    $DOCKER run --privileged --rm -it \
+      --cap-add PERFMON \
       -v $(realpath kokkos-4.3):/kokkos \
       $version \
       /dockerConfigBuildRun.sh \
