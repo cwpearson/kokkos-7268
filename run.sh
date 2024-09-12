@@ -35,7 +35,7 @@ versions=(
     # 11.5.0
     # 12.4.0
     # 13.3.0
-    # 14.2.0
+    14.2.0
 )
 
 for version in "${versions[@]}"; do

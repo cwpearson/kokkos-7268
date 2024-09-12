@@ -20,17 +20,8 @@ struct Functor {
       : _output(output_),
         _leftInput(leftInput_),
         _rightInput(rightInput_),
-#if 0
-        _iend(output_.extent_int(rank(output_) - 1)),
-#else
-        _iend(0),
-#endif
-        _jend(rightInput_.extent_int(4 - 1)) {
-#if 0
-          std::cerr << __FILE__ << ":" << __LINE__ << " rank(output_)=" << _iend << "\n";
-          std::cerr << __FILE__ << ":" << __LINE__ << " _iend=" << _iend << "\n";
-#endif
-        }
+        _iend(output_.extent_int(3)),
+        _jend(rightInput_.extent_int(3)) {}
 
   KOKKOS_INLINE_FUNCTION
   void operator()(const int cl, const int bf, const int pt) const {
@@ -39,25 +30,10 @@ struct Functor {
 
   KOKKOS_FORCEINLINE_FUNCTION
   void apply_matvec_product(const int& cl, const int& bf, const int& pt) const {
-    const auto lpt = (_leftInput.extent(1) == 1 ? size_t(0) : pt);
     for (int i = 0; i < _iend; ++i) {
       value_type tmp(0);
       for (int j = 0; j < _jend; ++j)
-        tmp += _leftInput(cl, lpt, j, i) * _rightInput(cl, bf, pt, j);
-#if 0
-      if (cl >= _output.extent_int(0)) {
-        std::cerr << __FILE__ << ":" << __LINE__ << "\n";
-      }
-      if (bf >= _output.extent_int(1)) {
-        std::cerr << __FILE__ << ":" << __LINE__ << "\n";
-      }
-      if (pt >= _output.extent_int(2)) {
-        std::cerr << __FILE__ << ":" << __LINE__ << "\n";
-      }
-      if (i >= _output.extent_int(3)) {
-        std::cerr << __FILE__ << ":" << __LINE__ << " i=" << i << " but _output.extent(3)=" << _output.extent_int(3) << "\n";
-      }
-#endif
+        tmp += _leftInput(cl, pt, j, i) * _rightInput(cl, bf, pt, j);
       _output(cl, bf, pt, i) = tmp;
     }
   }
@@ -78,7 +54,7 @@ int main(int argc, char* argv[]) {
     using DRV =
         Kokkos::DynRankView<double,
                             Kokkos::Device<Kokkos::Serial, Kokkos::HostSpace>>;
-    DRV output("output", 512, 8, 8);
+    DRV output("output", 512, 8, 8, 3);
     DRV lv("lv", 512, 8, 3, 3);
     DRV rv("rv", 512, 8, 8, 3);
     Kokkos::Timer t;
