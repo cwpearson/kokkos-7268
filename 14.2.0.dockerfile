@@ -11,11 +11,6 @@ RUN wget --no-check-certificate https://sourceware.org/pub/valgrind/valgrind-3.2
 
 RUN apt-get update && apt-get install -y linux-perf
 
-
-ADD kokkos-4.3 /kokkos-4.3
-ADD kokkos-4.4 /kokkos-4.4
-ADD kokkos-4.4-patched /kokkos-4.4-patched
-
 ADD src /src
 ADD dockerConfigBuildRun.sh /dockerConfigBuildRun.sh
 RUN chmod +x /dockerConfigBuildRun.sh
